@@ -1,0 +1,6 @@
+.configurator .hull .slot {
+  width: 120px;
+  height: 120px;
+  border: solid 1px #eee;
+  float: left;
+}

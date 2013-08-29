@@ -2,9 +2,11 @@ api = (function()
 {
     var session_id = null;
     function request(method, data, callback){
+        if (session_id)
+            data.session_id = session_id;
         $.ajax({
-            url: '/proxy.php?action=' + method,
-            data: data,
+            url: 'http://wartech.algo.pw/' + method,
+            data: data
         }).done(function(reply){
             callback($.parseJSON(reply));
         });
@@ -14,11 +16,13 @@ api = (function()
         init: function(callback){
             if (!$.cookie('session_id')){
                 request('init', {}, function(reply){
-                    var sessionId = reply.session_id;
-                    $.cookie('session_id', sessionId);
-                    callback(reply);
+                    session_id = reply.session_id;
+                    $.cookie('session_id', session_id);
+                    callback();
                 });
-
+            } else {
+                session_id = $.cookie('session_id');
+                callback();
             }
         },
         getAllUsers: function(callback){
@@ -30,13 +34,13 @@ api = (function()
             }, callback);
         },
         getAllModules: function(callback){
-              request('get_all_modules', callback);
+            request('get_all_modules', {}, callback);
         },
         getUserRobot: function(callback){
-              request('get_user_robot', callback);
+            request('get_user_robot', {}, callback);
         },
         getUserModules: function(callback){
-              request('get_user_modules', callback);
+            request('get_user_modules', {}, callback);
         },
         setModuleToSlot: function(slot_id, module_id, callback) {
             request('set_module_to_slot', {
