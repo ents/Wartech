@@ -1,19 +1,25 @@
-function api()
+api = (function()
 {
     var session_id = null;
-    var request = function(method, data, callback){
+    function request(method, data, callback){
         $.ajax({
-            url: '/proxy.php',
+            url: '/proxy.php?action=' + method,
             data: data,
-            success: function(reply){
-                console.log(reply);
-            }
+        }).done(function(reply){
+            callback($.parseJSON(reply));
         });
     }
 
     return {
         init: function(callback){
-            request('init', {}, callback);
+            if (!$.cookie('session_id')){
+                request('init', {}, function(reply){
+                    var sessionId = reply.session_id;
+                    $.cookie('session_id', sessionId);
+                    callback(reply);
+                });
+
+            }
         },
         getAllUsers: function(callback){
             request('get_all_users', {}, callback);
@@ -48,4 +54,4 @@ function api()
             }, callback);
         }
     };
-}
+})();
