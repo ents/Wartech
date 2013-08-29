@@ -7,7 +7,7 @@ robot = {
         api.getUserRobot(function(_robot){
             template.load('hull/' + _robot.hull_name, function(reply){
                 robot = _robot;
-                $('.hull').html(reply);
+                $('.hull').html(reply).addClass(robot.hull_name);
                 processIfLoaded();
             });
         });
